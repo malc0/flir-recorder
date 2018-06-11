@@ -1,13 +1,17 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
-#import matplotlib
-#matplotlib.use('tkagg')
+try:
+	import av
+except ImportError:
+	PyAV = False
+else:
+	PyAV = True
+
 import numpy as np
 import os
 import sys
 import tkinter as tk
-#import matplotlib.pyplot as plt
-#plt.ion()
+from tkinter import messagebox as tkmb
 import time
 
 if 'GI_TYPELIB_PATH' in os.environ:
@@ -19,249 +23,9 @@ import gi
 gi.require_version('Aravis', '0.6')
 from gi.repository import Aravis
 
+import cm
+
 #from IPython.terminal.debugger import set_trace
-
-ironycbcr = np.array(((16, 128, 128),
-		 (20, 144, 125),
-		 (21, 150, 124),
-		 (22, 157, 123),
-		 (24, 164, 122),
-		 (25, 167, 122),
-		 (27, 171, 123),
-		 (28, 174, 124),
-		 (30, 177, 125),
-		 (31, 178, 126),
-		 (33, 179, 128),
-		 (35, 180, 131),
-		 (37, 182, 133),
-		 (40, 182, 136),
-		 (42, 182, 139),
-		 (44, 183, 142),
-		 (46, 183, 144),
-		 (48, 184, 146),
-		 (49, 183, 149),
-		 (51, 183, 151),
-		 (52, 182, 154),
-		 (54, 182, 157),
-		 (56, 182, 160),
-		 (58, 181, 163),
-		 (60, 180, 165),
-		 (61, 180, 167),
-		 (63, 179, 170),
-		 (64, 178, 173),
-		 (66, 177, 176),
-		 (67, 176, 178),
-		 (69, 175, 181),
-		 (70, 174, 184),
-		 (71, 173, 186),
-		 (73, 172, 188),
-		 (74, 171, 190),
-		 (75, 170, 192),
-		 (76, 169, 194),
-		 (77, 168, 195),
-		 (78, 166, 197),
-		 (80, 165, 197),
-		 (81, 163, 198),
-		 (82, 162, 199),
-		 (84, 160, 200),
-		 (86, 158, 199),
-		 (87, 156, 200),
-		 (89, 153, 200),
-		 (91, 150, 200),
-		 (93, 147, 201),
-		 (94, 143, 201),
-		 (96, 139, 201),
-		 (98, 136, 201),
-		 (100, 131, 201),
-		 (102, 127, 201),
-		 (104, 121, 201),
-		 (105, 115, 201),
-		 (106, 109, 202),
-		 (107, 102, 202),
-		 (108, 95, 202),
-		 (110, 89, 202),
-		 (112, 85, 202),
-		 (114, 82, 202),
-		 (115, 79, 201),
-		 (117, 76, 201),
-		 (119, 74, 200),
-		 (121, 72, 199),
-		 (123, 70, 198),
-		 (124, 68, 198),
-		 (126, 66, 197),
-		 (128, 65, 196),
-		 (130, 64, 196),
-		 (132, 62, 195),
-		 (133, 61, 194),
-		 (135, 60, 193),
-		 (137, 58, 193),
-		 (139, 57, 191),
-		 (142, 55, 190),
-		 (144, 54, 189),
-		 (146, 53, 188),
-		 (148, 52, 187),
-		 (150, 51, 186),
-		 (152, 50, 185),
-		 (153, 49, 184),
-		 (155, 48, 183),
-		 (158, 46, 182),
-		 (161, 44, 180),
-		 (163, 43, 179),
-		 (166, 42, 177),
-		 (168, 40, 176),
-		 (170, 39, 175),
-		 (171, 38, 174),
-		 (174, 37, 172),
-		 (175, 36, 171),
-		 (178, 35, 169),
-		 (180, 34, 168),
-		 (182, 32, 166),
-		 (183, 32, 165),
-		 (185, 32, 164),
-		 (187, 32, 163),
-		 (189, 33, 161),
-		 (191, 33, 159),
-		 (193, 33, 158),
-		 (195, 36, 157),
-		 (198, 39, 155),
-		 (200, 41, 154),
-		 (202, 46, 152),
-		 (205, 50, 150),
-		 (207, 55, 148),
-		 (210, 60, 146),
-		 (212, 65, 145),
-		 (214, 71, 143),
-		 (217, 79, 141),
-		 (219, 85, 140),
-		 (221, 91, 138),
-		 (224, 97, 136),
-		 (225, 102, 135),
-		 (227, 107, 134),
-		 (229, 112, 132),
-		 (231, 117, 131),
-		 (233, 121, 130),
-		 (234, 125, 128)), np.uint8)
-
-iron = np.array(((0, 0, 0),
-		 (0, 0, 36),
-		 (0, 0, 51),
-		 (0, 0, 66),
-		 (0, 0, 81),
-		 (2, 0, 90),
-		 (4, 0, 99),
-		 (7, 0, 106),
-		 (11, 0, 115),
-		 (14, 0, 119),
-		 (20, 0, 123),
-		 (27, 0, 128),
-		 (33, 0, 133),
-		 (41, 0, 137),
-		 (48, 0, 140),
-		 (55, 0, 143),
-		 (61, 0, 146),
-		 (66, 0, 149),
-		 (72, 0, 150),
-		 (78, 0, 151),
-		 (84, 0, 152),
-		 (91, 0, 153),
-		 (97, 0, 155),
-		 (104, 0, 155),
-		 (110, 0, 156),
-		 (115, 0, 157),
-		 (122, 0, 157),
-		 (128, 0, 157),
-		 (134, 0, 157),
-		 (139, 0, 157),
-		 (146, 0, 156),
-		 (152, 0, 155),
-		 (157, 0, 155),
-		 (162, 0, 155),
-		 (167, 0, 154),
-		 (171, 0, 153),
-		 (175, 1, 152),
-		 (178, 1, 151),
-		 (182, 2, 149),
-		 (185, 4, 149),
-		 (188, 5, 147),
-		 (191, 6, 146),
-		 (193, 8, 144),
-		 (195, 11, 142),
-		 (198, 13, 139),
-		 (201, 17, 135),
-		 (203, 20, 132),
-		 (206, 23, 127),
-		 (208, 26, 121),
-		 (210, 29, 116),
-		 (212, 33, 111),
-		 (214, 37, 103),
-		 (217, 41, 97),
-		 (219, 46, 89),
-		 (221, 49, 78),
-		 (223, 53, 66),
-		 (224, 56, 54),
-		 (226, 60, 42),
-		 (228, 64, 30),
-		 (229, 68, 25),
-		 (231, 72, 20),
-		 (232, 76, 16),
-		 (234, 78, 12),
-		 (235, 82, 10),
-		 (236, 86, 8),
-		 (237, 90, 7),
-		 (238, 93, 5),
-		 (239, 96, 4),
-		 (240, 100, 3),
-		 (241, 103, 3),
-		 (241, 106, 2),
-		 (242, 109, 1),
-		 (243, 113, 1),
-		 (244, 116, 0),
-		 (244, 120, 0),
-		 (245, 125, 0),
-		 (246, 129, 0),
-		 (247, 133, 0),
-		 (248, 136, 0),
-		 (248, 139, 0),
-		 (249, 142, 0),
-		 (249, 145, 0),
-		 (250, 149, 0),
-		 (251, 154, 0),
-		 (252, 159, 0),
-		 (253, 163, 0),
-		 (253, 168, 0),
-		 (253, 172, 0),
-		 (254, 176, 0),
-		 (254, 179, 0),
-		 (254, 184, 0),
-		 (254, 187, 0),
-		 (254, 191, 0),
-		 (254, 195, 0),
-		 (254, 199, 0),
-		 (254, 202, 1),
-		 (254, 205, 2),
-		 (254, 208, 5),
-		 (254, 212, 9),
-		 (254, 216, 12),
-		 (255, 219, 15),
-		 (255, 221, 23),
-		 (255, 224, 32),
-		 (255, 227, 39),
-		 (255, 229, 50),
-		 (255, 232, 63),
-		 (255, 235, 75),
-		 (255, 238, 88),
-		 (255, 239, 102),
-		 (255, 241, 116),
-		 (255, 242, 134),
-		 (255, 244, 149),
-		 (255, 245, 164),
-		 (255, 247, 179),
-		 (255, 248, 192),
-		 (255, 249, 203),
-		 (255, 251, 216),
-		 (255, 253, 228),
-		 (255, 254, 239),
-		 (255, 255, 249)), np.uint8)
 
 fps_to_dev = { 50: 0, 25: 1, 12: 2, 6: 4, 3: 5 }	# WHY ISN'T 6:3?
 dev_to_fps = [ 50, 25, 12, 12, 6, 3 ]
@@ -284,28 +48,65 @@ def update_focus(newval):
 #	print('setting upper to ' + newval)
 #	dev.set_integer_feature_value('ScaleLimitUpper', int(newval))
 
-outvid = None
+outflir = None
 frames = 0
-def toggle_record():
-	global outvid
+def toggle_record_flir():
+	global outflir
 	global frames
 
-	if outvid:
+	if outflir:
 		print('Stop recording')
-		outvid.seek(0, os.SEEK_SET)
-		outvid.write(frames.to_bytes(4, 'little'))
-		outvid.close()
-		outvid = None
-		rec.config(image = recim)
+		outflir.seek(0, os.SEEK_SET)
+		outflir.write(frames.to_bytes(4, 'little'))
+		outflir.close()
+		outflir = None
+		recf.config(image = recim)
+		recm.config(state = tk.NORMAL)
 	else:
+		recm.config(state = tk.DISABLED)
 		filename = prefix.get() + time.strftime('%Y%m%d_%H:%M:%S%z.flir')
 		print('Recording to {}'.format(filename))
-		rec.config(image = stopim)
-		outvid = open(filename, 'wb')
+		recf.config(image = stopim)
+		outflir = open(filename, 'wb')
 		frames = 0
-		outvid.write(frames.to_bytes(4, 'little'))
-		outvid.write(h.to_bytes(4, 'little'))
-		outvid.write(w.to_bytes(4, 'little'))
+		outflir.write(frames.to_bytes(4, 'little'))
+		outflir.write(h.to_bytes(4, 'little'))
+		outflir.write(w.to_bytes(4, 'little'))
+
+outmp4 = None
+def toggle_record_mp4():
+	if not PyAV:
+		tkmb.showerror('No PyAV', 'PyAV must be installed for MP4 output to work')
+		return
+
+	global outmp4
+	global frames
+
+	if outmp4:
+		print('Stop recording')
+		while True:
+			packet = outmp4.streams[0].encode()
+			if not packet:
+				break
+			outmp4.mux(packet)
+		outmp4.close()
+		outmp4 = None
+		recm.config(image = recim)
+		recf.config(state = tk.NORMAL)
+	else:
+		recf.config(state = tk.DISABLED)
+		filename = prefix.get() + time.strftime('%Y%m%d_%H:%M:%S%z.mp4')
+		print('Recording to {}'.format(filename))
+		recm.config(image = stopim)
+		outmp4 = av.open(filename, 'w')
+		fps = dev_to_fps[dev.get_integer_feature_value('IRFrameRate')]
+		stream = outmp4.add_stream('mpeg4', str(fps))
+		stream.bit_rate = 10000000
+		stream.pix_fmt = 'yuv420p'
+		stream.width = w
+		stream.height = h
+		stream.thread_count = 3
+		frames = 0
 
 def do_af():
 	dev.set_integer_feature_value('FocusSpeed', 1)
@@ -353,20 +154,22 @@ format = tk.OptionMenu(gui, format_var, 'Radiometric', 'Linear 100mK', 'Linear 1
 format.grid(row = 1, column = 3, sticky = tk.W)
 
 tk.Label(gui, text='Focus').grid()
-focus = tk.Scale(gui, from_ = dev.get_integer_feature_bounds('FocusPos')[0], to = dev.get_integer_feature_bounds('FocusPos')[1], orient = tk.HORIZONTAL, length = .7 * w, command = update_focus, resolution = 100)
+focus = tk.Scale(gui, from_ = dev.get_integer_feature_bounds('FocusPos')[0], to = dev.get_integer_feature_bounds('FocusPos')[1], orient = tk.HORIZONTAL, length = .6 * w, command = update_focus, resolution = 100)
 focus.set(dev.get_integer_feature_value('FocusPos'))
-focus.grid(row = 2, column = 1, columnspan = 3, sticky = tk.W)
+focus.grid(row = 2, column = 1, columnspan = 2, sticky = tk.W)
+
+tk.Button(gui, text = "Auto focus", command = do_af).grid(row = 2, column = 3)
 
 tk.Label(gui, text='Output file prefix').grid()
 prefix = tk.Entry(gui, background = 'white')
 prefix.grid(row = 3, column = 1, sticky = tk.W + tk.E, pady = 5)
 
-recim = tk.PhotoImage(data = "R0lGODlhSwAZAPAAAP8AAAAAACH5BAEAAAEALAAAAABLABkAAAJTjI+py+0Po5y0WglyvrwvDYLeaIXmRqbPyaquwsbvHNezW8t3mrf72NP9OEHf8FI8HYnJ0BLZFD1LUcAUGr1Ss9oKt+stgpm5cadsBkrT7LY7UAAAOw==")	# base64'd GIF
-stopim = tk.PhotoImage(data = "R0lGODlhSwAZAPAAAAAAAAAAACH5BAEAAAEALAAAAABLABkAAAJQjI+py+0Po5y02ouzBrz772niA5bgiC7myqXuwa7vG5uzW5d3mp/72Pv8gMHOUFQ0HjPJ1hLTBDyhzeklarVgs5QtV+L9QsJiB7mMTqvXogIAOw==")
-rec = tk.Button(gui, image = recim, command = toggle_record)
-rec.grid(row = 3, column = 2, sticky = tk.E)
-
-tk.Button(gui, text = "Auto focus", command = do_af).grid(row = 3, column = 3)
+recim = tk.PhotoImage(data = "R0lGODlhGQAZAIABAP8AAP///yH5BAEKAAEALAAAAAAZABkAAAI4jI+py+0JYnxKWkvD3dPx33ziIpZVCUIop67s4aZG/M70hdx4rgOn/ruRhAzaw5VBZXiSpfPpLAAAOw==")	# base64'd GIF
+stopim = tk.PhotoImage(data = "R0lGODlhGQAZAIABAAAAAP///yH5BAEKAAEALAAAAAAZABkAAAI0jI+py+0PgZy0UmWzxboD7mVgWI3kZJ5fopZsi77wisxSeuKkHvKe3wFqhCIZDIJMKpeMAgA7")
+recf = tk.Button(gui, image = recim, command = toggle_record_flir, compound = tk.LEFT, text = '.flir')
+recf.grid(row = 3, column = 2, sticky = tk.E)
+recm = tk.Button(gui, image = recim, command = toggle_record_mp4, compound = tk.LEFT, text = '.mp4')
+recm.grid(row = 3, column = 3, sticky = tk.E)
 
 #dev.set_integer_feature_value('IRFormat', 0)
 #
@@ -383,25 +186,21 @@ for i in range(0, 50):
 
 camera.start_acquisition()
 
-def to_iron(I):	# my god this is slow.  FIXME
-	cmin, cmax = np.percentile(I, (1, 99))
-	I = (I - cmin) * iron.shape[0] / (cmax - cmin)
-	I[I < 0] = 0
-	I[I > iron.shape[0] - 1] = iron.shape[0] - 1
-	I = I.astype(np.uint8)
-
-	return iron[I]
-
 done = False
 def finish():
 	global done
-	if outvid:
-		toggle_record()
+	if outflir:
+		toggle_record_flir()
+	if outmp4:
+		toggle_record_mp4()
 	camera.stop_acquisition()
 	done = True
 	gui.destroy()
 
 gui.protocol("WM_DELETE_WINDOW", finish)
+
+if PyAV:
+	mp4frame = av.VideoFrame(w, h, 'yuv420p')
 
 last_frame = 0
 last_render = time.time()
@@ -425,12 +224,21 @@ while not done:
 		I = np.ndarray(buffer = buf.get_data(), dtype = np.uint16, shape = (h, w)) # 16 bpp
 		focus.set(dev.get_integer_feature_value('FocusPos'))
 
-		if outvid:
-			outvid.write(I.tobytes())
+		if outflir:
+			outflir.write(I.tobytes())
+			frames += 1
+		if outmp4:
+			Y, U, V = cm.to_iron_ycbcr(I)
+			mp4frame.planes[0].update(Y)
+			mp4frame.planes[1].update(U)
+			mp4frame.planes[2].update(V)
+			packet = outmp4.streams[0].encode(mp4frame)
+			if packet:
+				outmp4.mux(packet)
 			frames += 1
 
 		if time.time() - last_render > .19:	# update display at 5Hz
-			PI = tk.PhotoImage(data = ppm_header + to_iron(I).flatten().tobytes(), width = w, height = h, format = 'PPM')
+			PI = tk.PhotoImage(data = ppm_header + cm.to_iron_rgb(I).flatten().tobytes(), width = w, height = h, format = 'PPM')
 			vid_label.config(image = PI)
 			vid_label._cache = PI	# fool GC
 			last_render = time.time()
