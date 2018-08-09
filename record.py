@@ -123,7 +123,7 @@ except:
 
 dev = camera.get_device()
 
-print('Found an {} {} at {}'.format(camera.get_vendor_name(), camera.get_model_name(), dev.get_interface_address().to_string()))
+print('Found an {} {} at {}'.format(camera.get_vendor_name(), camera.get_model_name(), dev.get_device_address().to_string()))
 
 [x, y, w, h] = camera.get_region()
 bpp = camera.get_pixel_format() >> 16 & 0xff
