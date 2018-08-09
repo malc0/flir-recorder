@@ -139,6 +139,8 @@ def to_iron_rgb(cnp.ndarray[ndim = 2, dtype = cnp.uint16_t] I):
 	cdef cnp.ndarray[uint8_t, ndim = 3, mode = 'c'] oot = np.zeros((I.shape[0], I.shape[1], 3), np.uint8)
 
 	with nogil:
+		if cmin == cmax:
+			cmax = cmin + 1
 		cmult = 119 / (float)(cmax - cmin)
 		for y in range(0, I.shape[0]):
 			for x in range(0, I.shape[1]):
@@ -166,6 +168,8 @@ def to_iron_ycbcr(I16):
 	cdef cnp.ndarray[uint8_t, ndim = 2, mode = 'c'] V = np.zeros((I2.shape[0], I2.shape[1]), np.uint8)
 
 	with nogil:
+		if cmin == cmax:
+			cmax = cmin + 1
 		cmult = 119 / (float)(cmax - cmin)
 		for y in range(0, I.shape[0]):
 			for x in range(0, I.shape[1]):

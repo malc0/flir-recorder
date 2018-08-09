@@ -246,6 +246,8 @@ iron = np.array(((0, 0, 0),
 
 def to_iron_rgb(I):	# my god this is slow
 	cmin, cmax = np.percentile(I, (1, 99))
+	if cmin == cmax:
+		cmax = cmin + 1
 	I = (I - cmin) * iron.shape[0] / (cmax - cmin)
 	I[I < 0] = 0
 	I[I > iron.shape[0] - 1] = iron.shape[0] - 1
@@ -255,6 +257,8 @@ def to_iron_rgb(I):	# my god this is slow
 
 def to_iron_ycbcr(I):
 	cmin, cmax = np.percentile(I, (1, 99))
+	if cmin == cmax:
+		cmax = cmin + 1
 	I = (I - cmin) * ironycbcr.shape[0] / (cmax - cmin)
 	I[I < 0] = 0
 	I[I > ironycbcr.shape[0] - 1] = ironycbcr.shape[0] - 1
