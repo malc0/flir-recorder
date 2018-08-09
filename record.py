@@ -40,6 +40,10 @@ def update_format(newval):
 def update_focus(newval):
 	dev.set_integer_feature_value('FocusPos', int(newval))
 
+def manual_focus(e):
+	global inhibit_focus_poll_until
+	inhibit_focus_poll_until = time.time() + (3600 if e.type == '4' else .5)	# 1hr on press, .5 on release
+
 #def update_tlower(newval):
 #	print('setting lower to ' + newval)
 #	dev.set_integer_feature_value('ScaleLimitLow', int(newval))
@@ -157,6 +161,8 @@ tk.Label(gui, text='Focus').grid()
 focus = tk.Scale(gui, from_ = dev.get_integer_feature_bounds('FocusPos')[0], to = dev.get_integer_feature_bounds('FocusPos')[1], orient = tk.HORIZONTAL, length = .6 * w, command = update_focus, resolution = 100)
 focus.set(dev.get_integer_feature_value('FocusPos'))
 focus.grid(row = 2, column = 1, columnspan = 2, sticky = tk.W)
+focus.bind("<ButtonPress-1>", manual_focus)
+focus.bind("<ButtonRelease-1>", manual_focus)
 
 tk.Button(gui, text = "Auto focus", command = do_af).grid(row = 2, column = 3)
 
@@ -204,6 +210,7 @@ if PyAV:
 
 last_frame = 0
 last_render = time.time()
+inhibit_focus_poll_until = 0
 while not done:
 	buf = stream.pop_buffer()
 
@@ -222,7 +229,8 @@ while not done:
 #			set_trace()
 
 		I = np.ndarray(buffer = buf.get_data(), dtype = np.uint16, shape = (h, w)) # 16 bpp
-		focus.set(dev.get_integer_feature_value('FocusPos'))
+		if time.time() > inhibit_focus_poll_until:
+			focus.set(dev.get_integer_feature_value('FocusPos'))
 
 		if outflir:
 			outflir.write(I.tobytes())
