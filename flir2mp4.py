@@ -2,6 +2,7 @@
 
 import av
 import numpy as np
+import os
 import sys
 
 from cm import to_iron_ycbcr
@@ -10,6 +11,10 @@ with open(sys.argv[1], 'rb') as f:
 	frames = int.from_bytes(f.read(4), 'little')
 	height = int.from_bytes(f.read(4), 'little')
 	width = int.from_bytes(f.read(4), 'little')
+
+	if frames == 0:
+		frames = (os.path.getsize(sys.argv[1]) - 12) // height // width // 2
+		print('Frame counter not set!  Guessed from file size as {}'.format(frames))
 
 	outvid = av.open(sys.argv[1] + '.mp4', 'w')
 	if len(sys.argv) > 2:
