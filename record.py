@@ -240,6 +240,7 @@ while not done:
 			mp4frame.planes[0].update(Y)
 			mp4frame.planes[1].update(U)
 			mp4frame.planes[2].update(V)
+			mp4frame.pts = None
 			packet = outmp4.streams[0].encode(mp4frame)
 			if packet:
 				outmp4.mux(packet)

@@ -35,6 +35,7 @@ with open(sys.argv[1], 'rb') as f:
 		outframe.planes[0].update(Y)
 		outframe.planes[1].update(U)
 		outframe.planes[2].update(V)
+		outframe.pts = None
 		packet = outvid.streams[0].encode(outframe)
 		if packet:
 			outvid.mux(packet)
