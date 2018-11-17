@@ -1,4 +1,9 @@
+flir-recorder
+=============
+
 ![Interface](interface.jpeg)
+
+An interactive interface for FLIR GigE Vision thermal cameras (specifically an A645)
 
 Dependencies
 ============
@@ -36,3 +41,8 @@ Troubleshooting
 
 * Problem importing aravis (`ValueError: Namespace Aravis not available`): emend the setting of `GI_TYPELIB_PATH` in `record.py` to include wherever `Aravis-0.6.typelib` is installed.
 * `No camera found`: ensure your computer's network firewall is not blocking discovery packets to the camera.
+
+License
+=======
+
+GPLv2
